@@ -1,7 +1,6 @@
 # Clinical Evaluation of Medical Image Synthesis: A Case Study in Wireless Capsule Endoscopy
 
-This is the official **TensorFlow** implementation of  **"Clinical Evaluation of Medical Image Synthesis: A Case Study in Wireless Capsule Endoscopy"**.
-
+This is the official **TensorFlow** implementation of  [**"Clinical Evaluation of Medical Image Synthesis: A Case Study in Wireless Capsule Endoscopy"**](https://arxiv.org/abs/2411.00178).
 
 ## 📄 Paper Abstract
 <p align="justify">
