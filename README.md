@@ -10,7 +10,7 @@ Synthetic Data Generation (SDG) based on Artificial Intelligence (AI) can transf
 
 ## Citation
 ```bibtex
-@article{gatoula2024clinical,
+@article{gatoula2025clinical,
   title={Clinical Evaluation of Medical Image Synthesis: A Case Study in Wireless Capsule Endoscopy},
   author={Gatoula, Panagiota and Diamantis, Dimitrios E and Koulaouzidis, Anastasios and Carretero, Cristina and Chetcuti-Zammit, Stefania and Valdivia, Pablo Cortegoso and Gonz{\'a}lez-Su{\'a}rez, Bego{\~n}a and Mussetto, Alessandro and Plevris, John and Robertson, Alexander and others},
   journal={Scientific Reports},
