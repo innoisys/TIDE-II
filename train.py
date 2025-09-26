@@ -4,7 +4,6 @@ import tensorflow as tf
 from json import dump
 from argparse import ArgumentParser
 
-
 from model import tidev2
 from model.vae import VAE
 from utils.callbacks import VisualizeCallback, CheckpointCallback
@@ -14,10 +13,11 @@ from utils.plots import visualize_from_latent_space
 
 if __name__ == '__main__':
     parser = ArgumentParser()
+
     parser.add_argument("--model_name", required=True, type=str, choices=['tide', 'tidev2'], help='VAE model')
     parser.add_argument("--output_path", default='./results/', type=str, help='Path to store the results')
     # VAE model
-    parser.add_argument("--input_shape", default=(320, 320, 3), type=tuple, help='Image shape for training')
+    parser.add_argument("--input_shape", default=[320, 320, 3], nargs=3, help='Image shape for training')
     parser.add_argument("--dim_latent", default=8, type=int, help='Dimensionality of latent space')
     # Training
     parser.add_argument("--epochs", default=5000, type=int, help='Number of training epochs')
@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser.add_argument("--crop_dim", default=None, type=tuple,
                         help='Dimensions for cropping images. Ignore if images are already cropped')
     args = parser.parse_args()
+    args.input_shape = tuple(map(int, args.input_shape))
 
     # Create folders & Save training config
     os.makedirs(args.output_path, exist_ok=True)
@@ -59,8 +60,11 @@ if __name__ == '__main__':
     # Create Model
     if args.model_name == 'tidev2':
         vae = VAE(tidev2.ConvNeXtEncoderTiny(latent_dim=args.dim_latent),
-                  tidev2.ConvNeXtDecoderTiny(latent_dim=args.dim_latent)
+                  tidev2.ConvNeXtDecoderTiny(latent_dim=args.dim_latent,
+                                             image_dims=args.input_shape[:2],
+                                             out_channels=args.input_shape[-1])
                   )
+        vae.build((None, *args.input_shape))
         vae.compile(optimizer=tf.keras.optimizers.Adam(args.learning_rate))
 
     # Training
@@ -85,3 +89,4 @@ if __name__ == '__main__':
             shuffle=True,
             initial_epoch=0)
 
+    print('Training finished')

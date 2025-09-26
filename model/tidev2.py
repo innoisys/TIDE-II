@@ -87,17 +87,28 @@ class ConvNeXtDecoderTiny(Model):
                  drop_path_rate=0.0,
                  layer_scale_init_value=1e-6,
                  model_name="convnext",
-                 latent_dim=None):
+                 latent_dim=None,
+                 image_dims=(320, 320),
+                 out_channels=3):
         super().__init__(name=model_name)
 
         if latent_dim is None:
             raise ValueError("latent_dim must be specified for decoder")
 
         # Intro layer (dense + reshape)
+        # self.intro = Sequential([
+        #     layers.Dense(10 * 10 * projection_dims[0], activation="relu"),
+        #     layers.Reshape((10, 10, projection_dims[0]))
+        # ], name=model_name + "_intro")
+        # TODO
+        downsample_factor = 4 * 2 * 2 * 2
+        input_height, input_width = image_dims
+        init_h = input_height // downsample_factor
+        init_w = input_width // downsample_factor
         self.intro = Sequential([
-            layers.Dense(10 * 10 * projection_dims[0], activation="relu"),
-            layers.Reshape((10, 10, projection_dims[0]))
-        ], name=model_name + "_intro")
+            layers.Dense(init_h * init_w * projection_dims[0], activation="relu"),
+            layers.Reshape((init_h, init_w, projection_dims[0]))
+        ])
 
         # Upsampling layers
         self.upsample_layers = [self.intro]
@@ -133,7 +144,7 @@ class ConvNeXtDecoderTiny(Model):
         ], name=model_name + "_top")
 
         self.top_layer = TopLayer(filters=96)
-        self.pred_layer = layers.Conv2DTranspose(3, kernel_size=1, activation="sigmoid",
+        self.pred_layer = layers.Conv2DTranspose(out_channels, kernel_size=1, activation="sigmoid",
                                                  padding="same", name="pred_layer")
 
     def call(self, inputs, training=False):

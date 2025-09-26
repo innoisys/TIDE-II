@@ -8,24 +8,24 @@ class TopLayer(layers.Layer):
         self.filters = filters
 
         self.conv_1x1 = layers.Conv2D(self.filters, (1, 1), activation='relu', strides=1, padding="same",
-                                      name="_top_layer")
+                                      name="top_layer_1x1")
         self.conv_2x2 = layers.Conv2D(self.filters//3, (2, 2), activation='relu', strides=1, padding="same",
-                                      name="_top_layer")
+                                      name="top_layer_2x2")
         self.conv_4x4 = layers.Conv2D(self.filters//3, (4, 4), activation='relu', strides=1, padding="same",
-                                      name="_top_layer")
+                                      name="top_layer_4x4")
         self.conv_8x8 = layers.Conv2D(self.filters//3, (8, 8), activation='relu', strides=1, padding="same",
-                                      name="_top_layer")
+                                      name="top_layer_8x8")
 
         self.concat = layers.Concatenate(axis=-1)
         self.point_wise_conv = layers.Conv2D(self.filters, (1, 1), 1, activation=None, use_bias=False,
-                                             padding='same', name="_top_layer")
+                                             padding='same', name="top_layer_point_wise")
         self.feat_fusion = layers.Conv2D(self.filters, (1, 1), 1, activation=None, use_bias=False,
-                                         padding='same', name="_top_layer")
+                                         padding='same', name="top_layer_fusion")
 
         self.addition = layers.Add()
         self.gelu = layers.Activation('gelu')
         self.final_conv = layers.Conv2D(self.filters, (1, 1),  activation='relu', strides=1, padding="same",
-                                        name="_top_layer")
+                                        name="top_layer_out")
 
     def call(self, inputs, training=False):
         x = self.conv_1x1(inputs, training=training)

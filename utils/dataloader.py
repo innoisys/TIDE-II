@@ -1,6 +1,6 @@
 import os
-import random
 import numpy as np
+
 from PIL import Image
 from re import split, compile
 from tensorflow.keras.utils import Sequence
@@ -19,7 +19,7 @@ def list_filenames(data_path, img_extension='png', filename_prefix=None):
 
 
 class Dataset(Sequence):
-    def __init__(self, file_list, batch_size=32, crop_dim=None, resize_dim=None, shuffle=True):
+    def __init__(self, file_list, batch_size=32, crop_dim=None, resize_dim=None, shuffle=True, mode='RGB'):
         self.files_list = file_list
         self.batch_size = batch_size
 
@@ -27,6 +27,8 @@ class Dataset(Sequence):
         self.resize_dim = resize_dim
         self.shuffle = shuffle
         self.on_epoch_end()
+
+        self.mode=mode
 
     def __len__(self):
         return int(np.ceil(len(self.files_list) / self.batch_size))
@@ -53,7 +55,10 @@ class Dataset(Sequence):
         return image.crop((left, top, right, bottom))
 
     def load_images(self, filepath):
-        image = Image.open(filepath).convert('RGB')
+        if self.mode=='RGB':
+            image = Image.open(filepath).convert('RGB')
+        else:
+            image = Image.open(filepath)
         if self.crop_dim:
             image = self.center_crop(image, crop_dim=self.crop_dim)
         if self.resize_dim:
@@ -61,4 +66,6 @@ class Dataset(Sequence):
 
         image = np.array(image).astype(np.float32)
         image = image / 255.0
+        if image.ndim == 2:
+            image = np.expand_dims(image, -1)
         return image
